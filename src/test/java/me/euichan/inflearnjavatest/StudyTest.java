@@ -7,19 +7,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
   @Test
-  void create() {
+  @DisplayName("스터디 만들기")
+  void create_new_study() {
     Study study = new Study();
     assertNotNull(study);
     System.out.println("create");
   }
 
   @Test
-  void create1() {
+  void create_new_study_again() {
     System.out.println("create1");
   }
 
