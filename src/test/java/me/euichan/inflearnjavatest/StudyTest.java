@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 class StudyTest {
 
   @Test
-  @DisplayName("스터디 만들기")
+  @DisplayName("스터디 만들기 테스트")
   void create_new_study() {
     Study study = new Study();
     assertNotNull(study);
