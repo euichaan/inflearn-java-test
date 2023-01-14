@@ -12,17 +12,27 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.AggregateWith;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -36,22 +46,32 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StudyTest {
 
+  @Order(2)
   @FastTest
   @DisplayName("스터디 만들기 fast")
-  void create() {
+  void create() throws InterruptedException {
     Study actual = new Study(10);
     assertThat(actual.getLimit()).isGreaterThan(0);
   }
   // TODO ThreadLocal
 
-  @SlowTest
+  @RegisterExtension
+  static FindSlowTestExtension findSlowTestExtension =
+      new FindSlowTestExtension(1000L);
+
+
+  @Order(1)
+  @Test
   @DisplayName("스터디 만들기 slow")
-  void create_new_study_again() {
+  void create_new_study_again() throws InterruptedException {
+    Thread.sleep(1005L);
     System.out.println("create1");
   }
 
+  @Order(3)
   @DisplayName("스터디 만들기")
   @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
   void repeatTest(RepetitionInfo repetitionInfo) {
@@ -59,6 +79,7 @@ class StudyTest {
         repetitionInfo.getTotalRepetitions());
   }
 
+  @Order(4)
   @DisplayName("스터디 만들기")
   @ParameterizedTest(name = "{index} {displayName} message={0}")
   @CsvSource({"10, '자바 스터디'", "20, 스프링"})
